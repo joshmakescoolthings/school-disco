@@ -32,10 +32,10 @@
   .stat{background:#11151c;border:1px solid var(--grid);border-radius:8px;padding:6px 10px}
   .stat b{color:var(--ink);font-variant-numeric:tabular-nums}
   .stat.good b{color:#5bd98a}.stat.warn b{color:var(--gap)}
-  .lanehead{display:grid;grid-template-columns:84px 1.1fr 1.1fr 1fr;gap:6px;font-size:11px;
+  .lanehead{display:grid;grid-template-columns:84px 1fr 1fr 1.35fr;gap:6px;font-size:11px;
     text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:4px;padding-left:2px}
   .lanehead span{text-align:center}
-  .canvas{position:relative;display:grid;grid-template-columns:84px 1.1fr 1.1fr 1fr;gap:6px}
+  .canvas{position:relative;display:grid;grid-template-columns:84px 1fr 1fr 1.35fr;gap:6px}
   .ruler{position:relative}
   .lane{position:relative;background:repeating-linear-gradient(
       to bottom,transparent 0,transparent calc(var(--minpx) - 1px),
@@ -47,6 +47,8 @@
   .block{position:absolute;left:3px;right:3px;border-radius:6px;padding:4px 6px;overflow:hidden;
     font-size:11px;line-height:1.25;box-shadow:0 1px 0 rgba(0,0,0,.3)}
   .block .t{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .block.note .t,.block.mc .t{white-space:normal;overflow:visible;text-overflow:clip}
+  .block.note{overflow:visible}
   .block .a{opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .block .tag{opacity:.75;font-size:10px;margin-top:1px}
   .block .src{position:absolute;top:3px;right:3px}
@@ -115,53 +117,103 @@ const SETS = [
         at:'4:30:00pm', plays:'3:30', notes:'⭐ low-key opener · full play from the top · 98bpm → blends straight into Git Up (98) · build up into the set from here'},
       {lane:'deck2', lead:true, title:'Lush Life', artist:'Zara Larsson', playBpm:98,
         at:'4:33:30pm', plays:'3:20', notes:'⭐ 98bpm · end-to-end off Dance Monkey for now · crossover TBD'},
+      {lane:'note', title:'Lush Life BAR 61 (53s left) → fire SEVEN CONTINENTS HC1 on Deck 1',
+        at:'4:35:57pm', outAt:'4:36:50pm'},
+      {lane:'deck1', lead:true, title:'Seven Continents — HC1', artist:'Hopscotch Songs',
+        at:'4:35:57pm', outAt:'4:37:21pm', notes:'⭐ HC1 fired over Lush Life tail (53s) → plays all the way out, 1:24 total · takes floor as Lush Life ends · tempo TBD'},
+      {lane:'deck2', lead:true, title:'Pink Pony Club', artist:'Chappell Roan', bpm:107, playBpm:107,
+        at:'4:37:21pm', plays:'4:17', notes:'⭐ main · full play · 107bpm singalong'},
+      {lane:'deck1', lead:true, title:'Seven Nation Army', artist:'The White Stripes', bpm:122.2, playBpm:122.2,
+        at:'4:41:38pm', plays:'3:50', notes:'⭐ holds the floor · 122.2bpm (lol Meg) · come in on the riff to mask the +15 lift off PPC'},
+      {lane:'note', title:'SNA BAR 111 (14s left): start GROOVE IS IN THE HEART on Deck 2',
+        at:'4:45:14pm', outAt:'4:45:28pm'},
+      {lane:'deck2', lead:true, title:'Groove Is in the Heart', artist:'Deee-Lite', bpm:122, playBpm:120,
+        at:'4:45:14pm', outAt:'4:46:13pm', notes:'⭐ leads until CB fires · enters 122 matched to SNA · settled to 120 by CB drop'},
+      {lane:'note', title:'Groove 2:44 remaining → drop CHICKEN BANANA on Deck 1 (both 120) · Groove drops to whistle dip loop',
+        at:'4:46:13pm', plays:'0:10'},
+      {lane:'deck1', lead:true, title:'Chicken Banana', playBpm:120,
+        at:'4:46:13pm', plays:'2:12', notes:'⭐ takes floor · both decks 120'},
+      {lane:'deck2', title:'Groove — whistle dip loop (layer)', playBpm:120,
+        at:'4:46:13pm', outAt:'4:48:56pm', notes:'loop ONLY UP TO 🟠 orange flag HC2 · repeat ×4 after CB ends · ends 15s into Love Shack (when LS has 5:05 remaining)'},
+      {lane:'note', title:'CB ends → 16s gap · load LOVE SHACK on Deck 1 · ramp 120→134 over drum intro',
+        at:'4:48:25pm', outAt:'4:48:41pm'},
+      {lane:'deck1', lead:true, title:'Love Shack', artist:"The B-52's", rampFrom:120, rampTo:134,
+        at:'4:48:41pm', outAt:'4:54:15pm', notes:'⭐ starts after 16s load gap · ramp 120→134 over drum intro · Groove drops off at 5:05 remaining · HC2 = TIN ROOF (fires after rick roll)'},
+      {lane:'note', title:'LS 32s left — "YOUR WHAT?" → LOAD Never Gonna Give You Up on Deck 2, cue to start',
+        at:'4:53:29pm', plays:'0:01'},
+      {lane:'note', title:'LS 31s left → DROP Rick Astley · parents wind up for "TIIINNN ROOOF"... 😈',
+        at:'4:53:30pm', plays:'0:15'},
+      {lane:'deck2', title:'Never Gonna Give You Up', artist:'Rick Astley', playBpm:120,
+        at:'4:53:30pm', outAt:'4:53:45pm', notes:'rick roll · plays 15s · PAUSE on beat before crowd recovers'},
+      {lane:'note', title:'PAUSE Rick Astley → fire HC2 Deck 1 → "wikka wikka — TIIIIINNNN ROOOOF!!!" → Love Shack plays out ~30s',
+        at:'4:53:45pm', plays:'0:05'},
+      {lane:'deck1', kind:'mc', lead:true, title:'INTERLUDE — Flipper Dance prep', at:'4:54:15pm', plays:'2:00',
+        notes:'🥿 KIDS: remove shoes · place on hands · get ready for the Flipper Dance · 2 min break'},
+      {lane:'note', title:'👟 shoes off, on hands · hype the Flipper Dance · load Flippers on Deck 2',
+        at:'4:54:15pm', plays:'2:00'},
+      {lane:'deck2', lead:true, title:'Flippers', artist:'Art vs Science', bpm:125, playBpm:125,
+        at:'4:56:15pm', plays:'3:34', notes:'⭐ Flipper Dance · 125bpm · 3:34 · mostly plays out while teaching dorkiest moves ever'},
+      {lane:'note', title:'Flippers last 8s (4:59:41) → start GOSSIP FOLKS title loop on Deck 1 @120 · load Billie Jean on Deck 2',
+        at:'4:59:41pm', outAt:'4:59:49pm'},
+      {lane:'deck1', title:'Gossip Folks — title loop', artist:'Missy Elliott', playBpm:120,
+        at:'4:59:41pm', outAt:'4:59:57pm', notes:'16s loop · Flippers ends underneath at 4:59:49 · load window for Billie Jean'},
+      {lane:'deck2', lead:true, title:'Billie Jean', artist:'Michael Jackson', playBpm:120,
+        at:'4:59:57pm', plays:'4:50', notes:'⭐ 120bpm · length derived from bar 55 calc (1:48 + 3:02) · not full play'},
+      {lane:'note', title:'BJ bar 55 (3:02 remaining) → fire GO on Deck 1 · Chemical Bros over BJ tail',
+        at:'5:01:45pm', plays:'0:05'},
+      {lane:'deck1', lead:true, title:'Go', artist:'Chemical Brothers', playBpm:120,
+        at:'5:01:45pm', plays:'4:20', notes:'⭐ fires at BJ bar 55 · 3:02 of BJ underneath · 4:20 total'},
+      {lane:'note', title:'Go bar 103 (56s remaining) → shoot ANOTHER ONE BITES THE DUST on Deck 2 matched to Go @120',
+        at:'5:05:09pm', plays:'0:05'},
+      {lane:'deck2', lead:true, title:'Another One Bites the Dust', artist:'Queen', bpm:110, playBpm:120,
+        at:'5:05:09pm', plays:'0:00', notes:'⭐ shot at Go bar 103 · matched to Go @120 (native 110 → +9%) · 56s of Go underneath · ▶ LENGTH TBD'},
       {lane:'deck1', lead:true, title:'The Git Up', artist:'Blanco Brown (original)', bpm:98, playBpm:98,
-        at:'4:36:50pm', plays:'3:21', notes:'start cue at song start · full play'},
+        at:'5:21:40pm', plays:'3:21', notes:'start cue at song start · full play'},
       {lane:'deck2', title:'Bluey Theme (armed)', bpm:196, playBpm:98,
-        at:'4:36:50pm', plays:'3:21', notes:'native 196, djay ½-time to 98 · ad-lib scratch + hot-cue stabs'},
+        at:'5:21:40pm', plays:'3:21', notes:'native 196, djay ½-time to 98 · ad-lib scratch + hot-cue stabs'},
       {lane:'note', title:'Deck 2 Bluey — ad-lib: scratch & fire hook + Mum/Dad/Bingo over The Git Up (untimed)',
-        at:'4:36:50pm', plays:'3:21'},
+        at:'5:21:40pm', plays:'3:21'},
 
-      {lane:'deck1', kind:'mc', lead:true, title:'Welcome message', at:'4:40:11pm', plays:'0:30',
+      {lane:'deck1', kind:'mc', lead:true, title:'Welcome message', at:'5:25:01pm', plays:'0:30',
         notes:'low-key hello · resets tempo for 80bpm drop (length = PLACEHOLDER, confirm)'},
 
       {lane:'deck1', lead:true, title:'Shake It Off', artist:'Taylor Swift', bpm:160, playBpm:80,
-        at:'4:40:41pm', plays:'3:39', notes:'full play · ½-time, busy hats keep energy up'},
+        at:'5:25:31pm', plays:'3:39', notes:'full play · ½-time, busy hats keep energy up'},
       {lane:'deck2', title:"Drop It Like It's Hot — title loop", artist:'Snoop', bpm:93, playBpm:80,
-        at:'4:40:41pm', outAt:'4:43:46pm', notes:"armed @80 · backbeat over 'new girlfriend' bridge · PULL after breakdown"},
+        at:'5:25:31pm', outAt:'5:28:36pm', notes:"armed @80 · backbeat over 'new girlfriend' bridge · PULL after breakdown"},
       {lane:'note', title:"⚠ LOAD ZOOTOPIA → DECK 2 · HC1 = 'HEY' stab, fire on Shake It Off outro",
-        at:'4:43:46pm', outAt:'4:44:20pm'},
+        at:'5:28:36pm', outAt:'5:29:10pm'},
 
       {lane:'deck2', lead:true, title:'Zootopia', rampFrom:160, rampTo:129,
-        at:'4:44:20pm', outAt:'4:46:32pm',
+        at:'5:29:10pm', outAt:'5:31:22pm',
         notes:"in at HC1 @ end of Shake It Off · synced 160 → ramp to 129 · leads till bar 77"},
       {lane:'deck2', title:'Zootopia (outro)', playBpm:129,
-        at:'4:46:32pm', outAt:'4:47:21pm', notes:'final 49s playing out UNDER Soda Pop'},
+        at:'5:31:22pm', outAt:'5:32:11pm', notes:'final 49s playing out UNDER Soda Pop'},
 
-      {lane:'note', title:'LOAD SODA POP → DECK 1 · HC1 = hook loop', at:'4:45:30pm', plays:'0:25'},
+      {lane:'note', title:'LOAD SODA POP → DECK 1 · HC1 = hook loop', at:'5:30:20pm', plays:'0:25'},
       {lane:'deck1', title:'Soda Pop — HC1 loop (build-in)', artist:'Saja Boys', playBpm:129,
-        at:'4:46:17pm', outAt:'4:46:32pm',
+        at:'5:31:07pm', outAt:'5:31:22pm',
         notes:'🎛 filter build over Zootopia bars 69→77 (8 bars) → neutral by bar 77'},
       {lane:'deck1', lead:true, title:'Soda Pop', artist:'Saja Boys', playBpm:129,
-        at:'4:46:32pm', plays:'2:17',
+        at:'5:31:22pm', plays:'2:17',
         notes:'⭐ takes floor at Zootopia bar 77 (49s of Zootopia left) · loop released → full play-out @129'},
 
-      {lane:'note', title:'LOAD I LIKE TO MOVE IT → DECK 2 (Madagascar)', at:'4:47:25pm', plays:'0:20'},
-      {lane:'note', title:'Soda Pop bar 74 (11s left) → start SHOOTING HC1 on Deck 2', at:'4:48:38pm', plays:'0:11'},
+      {lane:'note', title:'LOAD I LIKE TO MOVE IT → DECK 2 (Madagascar)', at:'5:32:15pm', plays:'0:20'},
+      {lane:'note', title:'Soda Pop bar 74 (11s left) → start SHOOTING HC1 on Deck 2', at:'5:33:28pm', plays:'0:11'},
       {lane:'deck2', title:'I Like To Move It — HC1 stabs', artist:'Reel 2 Real (Madagascar)', playBpm:129,
-        at:'4:48:38pm', outAt:'4:48:49pm', notes:'shoot/chop HC1 over Soda Pop tail · synced 129'},
+        at:'5:33:28pm', outAt:'5:33:39pm', notes:'shoot/chop HC1 over Soda Pop tail · synced 129'},
       {lane:'deck2', lead:true, title:'I Like To Move It', artist:'Reel 2 Real (Madagascar)', playBpm:127,
-        at:'4:48:49pm', outAt:'4:50:42pm', notes:'⭐ 127bpm · NOT full play-out — cut to party loop at 24s remaining'},
+        at:'5:33:39pm', outAt:'5:35:32pm', notes:'⭐ 127bpm · NOT full play-out — cut to party loop at 24s remaining'},
       {lane:'deck2', lead:true, title:'"We Like to Party party" hook loop', playBpm:127,
-        at:'4:50:42pm', outAt:'4:50:58pm', notes:'~4s hook loop ×4 clean repeats @127 · then 16th-note roll-out (untimed)'},
+        at:'5:35:32pm', outAt:'5:35:48pm', notes:'~4s hook loop ×4 clean repeats @127 · then 16th-note roll-out (untimed)'},
       {lane:'note', title:'End of 4th repeat → SHOOT FIREWORK on Deck 1 · party hook stutters out as 16th-loop (untimed)',
-        at:'4:50:58pm', plays:'0:14'},
+        at:'5:35:48pm', plays:'0:14'},
       {lane:'deck1', lead:true, title:'Firework', artist:'Katy Perry', playBpm:127,
-        at:'4:50:58pm', plays:'3:39', notes:'⭐ in after 4 party repeats · 127bpm · time-filler, full-ish play'},
+        at:'5:35:48pm', plays:'3:39', notes:'⭐ in after 4 party repeats · 127bpm · time-filler, full-ish play'},
       {lane:'note', title:'Cue FREAKS remix (Studio One) → DECK 2 · 128bpm beatmatched off Firework',
-        at:'4:53:50pm', plays:'0:30'},
+        at:'5:38:40pm', plays:'0:30'},
       {lane:'deck2', lead:true, title:'Freaks (own remix)', artist:'Timmy Trumpet', source:'studio', playBpm:128,
-        at:'4:54:37pm', plays:'2:33', notes:'⭐ played from Studio One · 128bpm · beatmatched off Firework outro'},
+        at:'5:39:27pm', plays:'2:33', notes:'⭐ played from Studio One · 128bpm · beatmatched off Firework outro'},
     ]
   },
   {
@@ -172,7 +224,7 @@ const SETS = [
   }
 ];
 
-const MINPX = 28;
+const MINPX = 60; // 1px per second — fine scale so short cues/notes are legible
 const LANES = ['deck1','deck2','note'];
 
 /* Parked ideas — un-timed mashups to slot into a set later */
@@ -293,7 +345,8 @@ function render(){
       set.tracks.filter(x=>x.lane===lane).forEach(b=>{
         const d=document.createElement('div');d.className='block '+lane;
         d.style.top=(b.in/total*H)+'px';
-        d.style.height=Math.max(15,(b.out-b.in)/total*H)+'px';
+        const minH=(lane==='note')?38:15;
+        d.style.height=Math.max(minH,(b.out-b.in)/total*H)+'px';
         const dr=fmt(b.out-b.in);
         const src=(b.source&&SRC[b.source])?`<span class="pill src" style="background:${SRC[b.source].c}">${SRC[b.source].l}</span>`:'';
         if(b.kind==='mc'){
@@ -304,7 +357,7 @@ function render(){
           d.innerHTML=`${src}<div class="t">${b.title||b.text||''}</div><div class="tag">${fmt(b.in)} · ${dr}</div>`;
         }else{
           let bpmStr='';
-          if(b.ramp){ bpmStr='⤵ '+Math.round(b.rampFrom)+'→'+Math.round(b.rampTo)+'bpm ramp'; }
+          if(b.ramp){ bpmStr=(b.rampTo>=b.rampFrom?'⤴ ':'⤵ ')+Math.round(b.rampFrom)+'→'+Math.round(b.rampTo)+'bpm ramp'; }
           else if(b.playBpm){ bpmStr=Math.round(b.playBpm)+'bpm';
             if(b.fold) bpmStr=Math.round(b.bpm)+' '+b.fold+'→'+Math.round(b.playBpm)+'bpm';
             else if(b.bpm && Math.abs(b.playBpm-b.bpm)>=0.5) bpmStr=Math.round(b.bpm)+'→'+Math.round(b.playBpm)+'bpm'; }
