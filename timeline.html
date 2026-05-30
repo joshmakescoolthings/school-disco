@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>School Disco — Set Timelines</title>
+<style>
+  :root{
+    --bg:#0e1014; --panel:#171b22; --ink:#e8ecf2; --muted:#8a93a3;
+    --grid:#262c36; --grid2:#1d222b;
+    --main:#ffd23f; --main-ink:#1a1400;
+    --second:#4cc9f0; --second-ink:#001722;
+    --note:#9aa6b6; --note-ink:#0c0f14;
+    --spotify:#1db954; --studio:#ff7a45;
+    --gap:#ff5d5d;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:14px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+  header{padding:18px 22px;border-bottom:1px solid var(--grid);position:sticky;top:0;background:var(--bg);z-index:30}
+  h1{margin:0 0 4px;font-size:20px;letter-spacing:.3px}
+  .sub{color:var(--muted);font-size:13px}
+  .legend{display:flex;gap:16px;margin-top:10px;flex-wrap:wrap;align-items:center}
+  .chip{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--muted)}
+  .sw{width:14px;height:14px;border-radius:3px;display:inline-block}
+  .pill{font-size:10px;font-weight:700;padding:1px 5px;border-radius:4px;color:#fff}
+  .wrap{display:flex;gap:34px;padding:22px;align-items:flex-start;flex-wrap:wrap}
+  .set{background:var(--panel);border:1px solid var(--grid);border-radius:12px;padding:14px 14px 18px;flex:1 1 520px;min-width:480px}
+  .set h2{margin:0 0 2px;font-size:16px}
+  .set .meta{color:var(--muted);font-size:12px;margin-bottom:6px}
+  .stats{display:flex;gap:14px;font-size:12px;margin:8px 0 14px;flex-wrap:wrap}
+  .stat{background:#11151c;border:1px solid var(--grid);border-radius:8px;padding:6px 10px}
+  .stat b{color:var(--ink);font-variant-numeric:tabular-nums}
+  .stat.good b{color:#5bd98a}.stat.warn b{color:var(--gap)}
+  .lanehead{display:grid;grid-template-columns:84px 1.1fr 1.1fr 1fr;gap:6px;font-size:11px;
+    text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:4px;padding-left:2px}
+  .lanehead span{text-align:center}
+  .canvas{position:relative;display:grid;grid-template-columns:84px 1.1fr 1.1fr 1fr;gap:6px}
+  .ruler{position:relative}
+  .lane{position:relative;background:repeating-linear-gradient(
+      to bottom,transparent 0,transparent calc(var(--minpx) - 1px),
+      var(--grid2) calc(var(--minpx) - 1px),var(--grid2) var(--minpx));
+    border-radius:8px;border:1px solid var(--grid)}
+  .tick{position:absolute;left:0;width:100%;border-top:1px solid var(--grid);font-size:10px;
+    color:var(--muted);padding-left:4px;font-variant-numeric:tabular-nums}
+  .tick.major{border-top-color:#33424f;color:#aeb8c6;font-weight:600}
+  .block{position:absolute;left:3px;right:3px;border-radius:6px;padding:4px 6px;overflow:hidden;
+    font-size:11px;line-height:1.25;box-shadow:0 1px 0 rgba(0,0,0,.3)}
+  .block .t{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .block .a{opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .block .tag{opacity:.75;font-size:10px;margin-top:1px}
+  .block .src{position:absolute;top:3px;right:3px}
+  .block.deck1{background:var(--main);color:var(--main-ink)}
+  .block.deck2{background:var(--second);color:var(--second-ink)}
+  .block .star{font-style:normal}
+  .block.note{background:repeating-linear-gradient(45deg,#222934,#222934 6px,#1c222c 6px,#1c222c 12px);
+    color:var(--ink);border:1px solid #38424f;font-style:italic}
+  .block.mc{background:repeating-linear-gradient(45deg,#3a3320,#3a3320 7px,#2e2818 7px,#2e2818 14px);
+    color:#ffe9a8;border:1px dashed #b89328}
+  .gap{position:absolute;left:3px;right:3px;border:1.5px dashed var(--gap);
+    border-radius:6px;color:var(--gap);font-size:10px;display:flex;align-items:center;
+    justify-content:center;text-align:center;background:rgba(255,93,93,.06)}
+  .empty{color:var(--muted);font-size:12px;text-align:center;padding:20px}
+  .ideas{margin:0 22px 22px;background:var(--panel);border:1px dashed #b89328;border-radius:12px;padding:14px 16px}
+  .ideas h2{margin:0 0 8px;font-size:15px;color:#ffe9a8}
+  .idea{border-top:1px solid var(--grid);padding:8px 0}
+  .idea:first-of-type{border-top:none}
+  .idea .it{font-weight:700}
+  .idea .ic{color:var(--muted);font-size:12px;margin-top:3px}
+  footer{padding:14px 22px;color:var(--muted);font-size:12px;border-top:1px solid var(--grid)}
+  code{background:#11151c;padding:1px 5px;border-radius:4px;color:#cdd6e2}
+</style>
+</head>
+<body>
+<header>
+  <h1>🟡 School Disco — Minion DJ Set Timelines</h1>
+  <div class="sub">Juniors 16:30–17:45 (75 min) · Seniors 18:30–20:00 (90 min) · enter as wall-clock start + duration; ruler shows elapsed + clock</div>
+  <div class="legend">
+    <span class="chip"><span class="sw" style="background:var(--main)"></span>Deck 1</span>
+    <span class="chip"><span class="sw" style="background:var(--second)"></span>Deck 2</span>
+    <span class="chip">⭐ = carrying the floor (lead)</span>
+    <span class="chip"><span class="sw" style="background:#222934;border:1px solid #38424f"></span>Notes / cues</span>
+    <span class="chip">source:</span>
+    <span class="chip"><span class="pill" style="background:var(--spotify)">SPOT</span>Spotify</span>
+    <span class="chip"><span class="pill" style="background:var(--studio)">S1</span>Studio One</span>
+    <span class="chip"><span class="sw" style="background:transparent;border:1.5px dashed var(--gap)"></span>uncovered gap</span>
+  </div>
+</header>
+
+<div class="wrap" id="wrap"></div>
+
+<div class="ideas" id="ideas"></div>
+
+<footer>
+  Tell me: <code>deck1 ⭐, "Drop It Like It's Hot" — Snoop, native 93bpm, riding 124, begin 4:30pm, plays 2:30, spotify</code> ·
+  duration can be real time (<code>plays 2:30</code>), bars (<code>16 bars</code>) or beats — bars/beats convert at the play tempo.
+  I edit the file, you refresh.
+</footer>
+
+<script>
+/* ============================================================
+   DATA. Two ways to set timing per cue:
+   (A) wall clock + duration:  at:'4:30pm', plays:'2:30'
+   (B) elapsed seconds:        in: 0, out: 150
+   lane: 'deck1' | 'deck2' | 'note'    lead:true => ⭐ carries the floor (counts for coverage)
+   source: 'spotify' | 'studio'   (badge on deck blocks)
+   ============================================================ */
+
+const SETS = [
+  {
+    id:'juniors', name:'SET 1 — Juniors (ages 5–8)',
+    clock24:'16:30', clockEnd:'17:45', minutes:75,
+    tracks:[
+      {lane:'deck1', lead:true, title:'Dance Monkey', artist:'Tones and I', bpm:98, playBpm:98,
+        at:'4:30:00pm', plays:'3:30', notes:'⭐ low-key opener · full play from the top · 98bpm → blends straight into Git Up (98) · build up into the set from here'},
+      {lane:'deck2', lead:true, title:'Lush Life', artist:'Zara Larsson', playBpm:98,
+        at:'4:33:30pm', plays:'3:20', notes:'⭐ 98bpm · end-to-end off Dance Monkey for now · crossover TBD'},
+      {lane:'deck1', lead:true, title:'The Git Up', artist:'Blanco Brown (original)', bpm:98, playBpm:98,
+        at:'4:36:50pm', plays:'3:21', notes:'start cue at song start · full play'},
+      {lane:'deck2', title:'Bluey Theme (armed)', bpm:196, playBpm:98,
+        at:'4:36:50pm', plays:'3:21', notes:'native 196, djay ½-time to 98 · ad-lib scratch + hot-cue stabs'},
+      {lane:'note', title:'Deck 2 Bluey — ad-lib: scratch & fire hook + Mum/Dad/Bingo over The Git Up (untimed)',
+        at:'4:36:50pm', plays:'3:21'},
+
+      {lane:'deck1', kind:'mc', lead:true, title:'Welcome message', at:'4:40:11pm', plays:'0:30',
+        notes:'low-key hello · resets tempo for 80bpm drop (length = PLACEHOLDER, confirm)'},
+
+      {lane:'deck1', lead:true, title:'Shake It Off', artist:'Taylor Swift', bpm:160, playBpm:80,
+        at:'4:40:41pm', plays:'3:39', notes:'full play · ½-time, busy hats keep energy up'},
+      {lane:'deck2', title:"Drop It Like It's Hot — title loop", artist:'Snoop', bpm:93, playBpm:80,
+        at:'4:40:41pm', outAt:'4:43:46pm', notes:"armed @80 · backbeat over 'new girlfriend' bridge · PULL after breakdown"},
+      {lane:'note', title:"⚠ LOAD ZOOTOPIA → DECK 2 · HC1 = 'HEY' stab, fire on Shake It Off outro",
+        at:'4:43:46pm', outAt:'4:44:20pm'},
+
+      {lane:'deck2', lead:true, title:'Zootopia', rampFrom:160, rampTo:129,
+        at:'4:44:20pm', outAt:'4:46:32pm',
+        notes:"in at HC1 @ end of Shake It Off · synced 160 → ramp to 129 · leads till bar 77"},
+      {lane:'deck2', title:'Zootopia (outro)', playBpm:129,
+        at:'4:46:32pm', outAt:'4:47:21pm', notes:'final 49s playing out UNDER Soda Pop'},
+
+      {lane:'note', title:'LOAD SODA POP → DECK 1 · HC1 = hook loop', at:'4:45:30pm', plays:'0:25'},
+      {lane:'deck1', title:'Soda Pop — HC1 loop (build-in)', artist:'Saja Boys', playBpm:129,
+        at:'4:46:17pm', outAt:'4:46:32pm',
+        notes:'🎛 filter build over Zootopia bars 69→77 (8 bars) → neutral by bar 77'},
+      {lane:'deck1', lead:true, title:'Soda Pop', artist:'Saja Boys', playBpm:129,
+        at:'4:46:32pm', plays:'2:17',
+        notes:'⭐ takes floor at Zootopia bar 77 (49s of Zootopia left) · loop released → full play-out @129'},
+
+      {lane:'note', title:'LOAD I LIKE TO MOVE IT → DECK 2 (Madagascar)', at:'4:47:25pm', plays:'0:20'},
+      {lane:'note', title:'Soda Pop bar 74 (11s left) → start SHOOTING HC1 on Deck 2', at:'4:48:38pm', plays:'0:11'},
+      {lane:'deck2', title:'I Like To Move It — HC1 stabs', artist:'Reel 2 Real (Madagascar)', playBpm:129,
+        at:'4:48:38pm', outAt:'4:48:49pm', notes:'shoot/chop HC1 over Soda Pop tail · synced 129'},
+      {lane:'deck2', lead:true, title:'I Like To Move It', artist:'Reel 2 Real (Madagascar)', playBpm:127,
+        at:'4:48:49pm', outAt:'4:50:42pm', notes:'⭐ 127bpm · NOT full play-out — cut to party loop at 24s remaining'},
+      {lane:'deck2', lead:true, title:'"We Like to Party party" hook loop', playBpm:127,
+        at:'4:50:42pm', outAt:'4:50:58pm', notes:'~4s hook loop ×4 clean repeats @127 · then 16th-note roll-out (untimed)'},
+      {lane:'note', title:'End of 4th repeat → SHOOT FIREWORK on Deck 1 · party hook stutters out as 16th-loop (untimed)',
+        at:'4:50:58pm', plays:'0:14'},
+      {lane:'deck1', lead:true, title:'Firework', artist:'Katy Perry', playBpm:127,
+        at:'4:50:58pm', plays:'3:39', notes:'⭐ in after 4 party repeats · 127bpm · time-filler, full-ish play'},
+      {lane:'note', title:'Cue FREAKS remix (Studio One) → DECK 2 · 128bpm beatmatched off Firework',
+        at:'4:53:50pm', plays:'0:30'},
+      {lane:'deck2', lead:true, title:'Freaks (own remix)', artist:'Timmy Trumpet', source:'studio', playBpm:128,
+        at:'4:54:37pm', plays:'2:33', notes:'⭐ played from Studio One · 128bpm · beatmatched off Firework outro'},
+    ]
+  },
+  {
+    id:'seniors', name:'SET 2 — Seniors (ages 8–12)',
+    clock24:'18:30', clockEnd:'20:00', minutes:90,
+    tracks:[
+    ]
+  }
+];
+
+const MINPX = 28;
+const LANES = ['deck1','deck2','note'];
+
+/* Parked ideas — un-timed mashups to slot into a set later */
+const IDEAS = [
+  {title:'Technologic × Baby Shark breakbeat', set:'Juniors (likely)', lines:[
+    'Deck 1: Technologic — Daft Punk',
+    'Deck 2: Baby Shark breakbeat',
+    'Cue: kick the "buy it, use it, break it, fix it" chant off on BAR 12 of the Baby Shark breakbeat',
+  ]},
+  {title:'Cotton Eye Joe — Rednex', set:'Juniors · DEFERRED', lines:[
+    'Pulled from the post-Freaks slot — too hectic, set already peaked too early (only 15 min in)',
+    'Revisit later as a second-wind energy lift, not back-to-back with the 127–129 block',
+  ]},
+];
+const SRC = {spotify:{c:'var(--spotify)',l:'SPOT'}, studio:{c:'var(--studio)',l:'S1'}};
+
+/* ---- time helpers ---- */
+function dur(x){ if(typeof x==='number')return x; const p=String(x).split(':').map(Number); return p.reduce((a,v)=>a*60+v,0); }
+// felt-tempo gap between two BPMs, folding half/double-time into one octave
+function foldDiff(a,c){ if(!a||!c)return 0; while(c/a>1.41)c/=2; while(a/c>1.41)c*=2; return Math.abs(a-c); }
+function clockToSec(s){ // "4:30pm" / "4:32:30pm" / "16:30" -> seconds of day
+  s=String(s).trim().toLowerCase(); let ap=null;
+  if(s.endsWith('am')){ap='am';s=s.slice(0,-2);} else if(s.endsWith('pm')){ap='pm';s=s.slice(0,-2);}
+  let [h,m=0,sec=0]=s.trim().split(':').map(Number);
+  if(ap==='pm'&&h<12)h+=12; if(ap==='am'&&h===12)h=0;
+  return h*3600+m*60+sec;
+}
+function fmt(sec){sec=Math.round(sec);const m=Math.floor(sec/60),s=sec%60;return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');}
+function clockLabel(sec){sec=((sec%86400)+86400)%86400;let h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;
+  const ap=h>=12?'pm':'am';let hh=h%12;if(hh===0)hh=12;return hh+':'+String(m).padStart(2,'0')+(s?':'+String(s).padStart(2,'0'):'')+ap;}
+
+function beatsPerBar(b){return b.sig?Number(String(b.sig).split('/')[0]):4;}
+function normalize(set){
+  const start=clockToSec(set.clock24);
+  set.tracks.forEach(b=>{
+    // b.bpm = NATIVE tempo of the track. b.playBpm = tempo it RIDES AT in the mix
+    // (pitched to match). Falls back to native, then the set anchor BPM.
+    b.playBpm = b.playBpm || b.bpm || set.anchorBpm || null;
+    if(b.rampFrom!=null && b.rampTo!=null){ b.ramp=true; b.playBpm=b.rampFrom; }
+    if(b.at!=null) b.in=clockToSec(b.at)-start;
+    if(b.in==null)b.in=0;
+    // duration precedence: bars > beats > plays(real secs) > outAt > out
+    // bars/beats are MUSICAL length, converted to real time at the PLAY tempo.
+    let d=null;
+    if(b.bars!=null && b.playBpm) d=b.bars*beatsPerBar(b)*60/b.playBpm;
+    else if(b.beats!=null && b.playBpm) d=b.beats*60/b.playBpm;
+    else if(b.plays!=null) d=dur(b.plays);
+    if(d!=null) b.out=b.in+d;
+    if(b.outAt!=null) b.out=clockToSec(b.outAt)-start;
+    if(b.out==null) b.out=b.in+30;
+    // pitch shift needed to ride at playBpm — but fold half/double-time first
+    // (e.g. native 196 ridden at 98 is clean ½-time, NOT a -50% stretch)
+    b.pitch=0; b.fold='';
+    if(!b.ramp && b.bpm && b.playBpm){
+      let n=b.bpm;
+      while(n/b.playBpm>1.41) n/=2;
+      while(b.playBpm/n>1.41) n*=2;
+      b.pitch=(b.playBpm/n-1)*100;
+      if(Math.abs(n-b.bpm)>0.5) b.fold = n<b.bpm?'½-time':'2×';
+    }
+    // tempo a track ENTERS and EXITS at (a ramp leaves on a different BPM than it arrives)
+    b.entryBpm=b.ramp?b.rampFrom:b.playBpm;
+    b.exitBpm =b.ramp?b.rampTo  :b.playBpm;
+  });
+  return start;
+}
+
+function render(){
+  const wrap=document.getElementById('wrap');wrap.innerHTML='';
+  SETS.forEach(set=>{
+    normalize(set);
+    const total=set.minutes*60, H=set.minutes*MINPX;
+    // the floor is carried by whichever track is flagged lead (⭐), on EITHER deck.
+    // coverage + gaps + tempo continuity all follow that lead chain, not one lane.
+    const leads=set.tracks.filter(x=>x.lead).sort((a,b)=>a.in-b.in);
+    let covered=0,cursor=0;const gaps=[];
+    leads.forEach(b=>{ if(b.in>cursor)gaps.push([cursor,b.in]);
+      covered+=Math.max(0,Math.min(b.out,total)-Math.max(b.in,0)); cursor=Math.max(cursor,b.out); });
+    if(cursor<total)gaps.push([cursor,total]);
+    const cov=Math.min(100,Math.round(covered/total*100));
+    // tempo continuity — ONLY matters across a beatmatched blend (contiguous leads).
+    // A break/gap between them (e.g. an MC welcome) resets perception, so the
+    // BPM can change freely there and we don't flag it.
+    let jumps=0,maxJump=0;
+    for(let i=1;i<leads.length;i++){const prev=leads[i-1],cur=leads[i];
+      const blended=(cur.in-prev.out)<4;
+      if(prev.exitBpm&&cur.entryBpm&&blended){const diff=foldDiff(prev.exitBpm,cur.entryBpm);
+        if(diff>maxJump)maxJump=diff;if(diff>12)jumps++;}}
+    const bigPitch=set.tracks.filter(x=>Math.abs(x.pitch)>6).length;
+
+    const el=document.createElement('div');el.className='set';
+    el.innerHTML=`<h2>${set.name}</h2>
+      <div class="meta">${clockLabel(clockToSec(set.clock24))} → ${clockLabel(clockToSec(set.clockEnd))} · ${set.minutes} min · ${set.tracks.length} cues</div>
+      <div class="stats">
+        <div class="stat ${cov>=98?'good':'warn'}">main coverage <b>${cov}%</b></div>
+        <div class="stat">filled <b>${fmt(covered)}</b> / ${fmt(total)}</div>
+        <div class="stat ${gaps.length?'warn':'good'}">gaps <b>${gaps.length}</b></div>
+        <div class="stat ${jumps?'warn':'good'}">tempo jumps &gt;12 <b>${jumps}</b><span style="color:var(--muted)"> (max ${Math.round(maxJump)})</span></div>
+        <div class="stat ${bigPitch?'warn':'good'}">harsh pitch &gt;6% <b>${bigPitch}</b></div>
+      </div>
+      <div class="lanehead"><span>time</span><span>deck 1</span><span>deck 2</span><span>notes</span></div>`;
+
+    const canvas=document.createElement('div');canvas.className='canvas';
+    canvas.style.setProperty('--minpx',MINPX+'px');
+    const start=clockToSec(set.clock24);
+
+    const ruler=document.createElement('div');ruler.className='ruler';ruler.style.height=H+'px';
+    for(let m=0;m<=set.minutes;m++){
+      const tk=document.createElement('div');tk.className='tick'+(m%5===0?' major':'');
+      tk.style.top=(m*MINPX)+'px';
+      tk.textContent=(m%5===0)? fmt(m*60)+' · '+clockLabel(start+m*60) : '';
+      ruler.appendChild(tk);
+    }
+    canvas.appendChild(ruler);
+
+    LANES.forEach(lane=>{
+      const col=document.createElement('div');col.className='lane';col.style.height=H+'px';
+      set.tracks.filter(x=>x.lane===lane).forEach(b=>{
+        const d=document.createElement('div');d.className='block '+lane;
+        d.style.top=(b.in/total*H)+'px';
+        d.style.height=Math.max(15,(b.out-b.in)/total*H)+'px';
+        const dr=fmt(b.out-b.in);
+        const src=(b.source&&SRC[b.source])?`<span class="pill src" style="background:${SRC[b.source].c}">${SRC[b.source].l}</span>`:'';
+        if(b.kind==='mc'){
+          d.className='block mc';
+          d.innerHTML=`<div class="t">🎤 ${b.title||'Mic / talk'}</div><div class="tag">${clockLabel(start+b.in)} · ${dr}</div>`+
+            (b.notes?`<div class="tag">${b.notes}</div>`:'');
+        }else if(lane==='note'){
+          d.innerHTML=`${src}<div class="t">${b.title||b.text||''}</div><div class="tag">${fmt(b.in)} · ${dr}</div>`;
+        }else{
+          let bpmStr='';
+          if(b.ramp){ bpmStr='⤵ '+Math.round(b.rampFrom)+'→'+Math.round(b.rampTo)+'bpm ramp'; }
+          else if(b.playBpm){ bpmStr=Math.round(b.playBpm)+'bpm';
+            if(b.fold) bpmStr=Math.round(b.bpm)+' '+b.fold+'→'+Math.round(b.playBpm)+'bpm';
+            else if(b.bpm && Math.abs(b.playBpm-b.bpm)>=0.5) bpmStr=Math.round(b.bpm)+'→'+Math.round(b.playBpm)+'bpm'; }
+          const big=!b.ramp && Math.abs(b.pitch)>6;
+          const pitchStr=(!b.ramp && Math.abs(b.pitch)>=0.5)?` <span style="font-weight:700;${big?'color:#b00;':''}">(${b.pitch>0?'+':''}${b.pitch.toFixed(1)}%${big?' ⚠':''})</span>`:'';
+          const star=b.lead?'<span class="star">⭐ </span>':'';
+          d.innerHTML=`${src}<div class="t">${star}${b.title||''}</div>`+
+            (b.artist?`<div class="a">${b.artist}</div>`:'')+
+            `<div class="tag">${clockLabel(start+b.in)} · ${dr}${bpmStr?' · '+bpmStr:''}${pitchStr}${b.key?' · '+b.key:''}</div>`+
+            (b.notes?`<div class="tag">📝 ${b.notes}</div>`:'');
+        }
+        d.title=`${b.title||b.text||''} ${b.artist||''}\n${clockLabel(start+b.in)}–${clockLabel(start+b.out)} (${dr})${b.notes?'\n'+b.notes:''}`;
+        col.appendChild(d);
+      });
+      if(lane==='deck1')gaps.forEach(([a,z])=>{
+        if(z-a<5)return;const g=document.createElement('div');g.className='gap';
+        g.style.top=(a/total*H)+'px';g.style.height=((z-a)/total*H)+'px';
+        g.textContent=(z-a>=40)?('gap '+fmt(z-a)):'';g.title='uncovered '+fmt(a)+'–'+fmt(z);
+        col.appendChild(g);
+      });
+      if(set.tracks.length===0 && lane==='deck1')
+        col.insertAdjacentHTML('beforeend','<div class="empty">no tracks yet — read me your first one</div>');
+      canvas.appendChild(col);
+    });
+    el.appendChild(canvas);wrap.appendChild(el);
+  });
+}
+
+function renderIdeas(){
+  const el=document.getElementById('ideas');
+  if(!IDEAS.length){el.style.display='none';return;}
+  el.innerHTML='<h2>💡 Parked ideas — slot into the set later</h2>'+
+    IDEAS.map(i=>`<div class="idea"><div class="it">${i.title}`+
+      (i.set?` · <span style="color:var(--muted);font-weight:400">${i.set}</span>`:'')+`</div>`+
+      `<div class="ic">${i.lines.map(l=>'• '+l).join('<br>')}</div></div>`).join('');
+}
+render();
+renderIdeas();
+</script>
+</body>
+</html>
