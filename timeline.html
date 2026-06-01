@@ -398,6 +398,11 @@ function clockToSec(s){ // "4:30pm" / "4:32:30pm" / "16:30" -> seconds of day
 function fmt(sec){sec=Math.round(sec);const m=Math.floor(sec/60),s=sec%60;return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');}
 function clockLabel(sec){sec=((sec%86400)+86400)%86400;let h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;
   const ap=h>=12?'pm':'am';let hh=h%12;if(hh===0)hh=12;return hh+':'+String(m).padStart(2,'0')+(s?':'+String(s).padStart(2,'0'):'')+ap;}
+// always-clean H:MM:SS (elapsed) and wall-clock with seconds — no fractional seconds
+function hms(sec){sec=Math.round(Math.max(0,sec));let h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60;
+  return h+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');}
+function wallSec(sec){sec=Math.round(((sec%86400)+86400)%86400);let h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60;
+  const ap=h>=12?'pm':'am';let hh=h%12||12;return hh+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')+ap;}
 
 function beatsPerBar(b){return b.sig?Number(String(b.sig).split('/')[0]):4;}
 function normalize(set){
@@ -559,7 +564,7 @@ function paint(e){
     p.ph.style.display='block';
     const t=Math.max(0,Math.min(e,p.total));
     p.ph.style.top=(t*MINPX/60)+'px';
-    p.ph.setAttribute('data-t', fmt(t)+' · '+clockLabel(p.start+t));
+    p.ph.setAttribute('data-t', hms(t)+' · '+wallSec(p.start+t));
   });
 }
 // keep the Juniors playhead pinned to mid-screen once it gets there; before that, scroll stays put
@@ -572,7 +577,7 @@ function autoScroll(){
 function seek(t){
   t=Math.max(0,t); _base=t; _tStart=performance.now(); _pre=0; _cur=t;
   paint(t); autoScroll();
-  clockEl.textContent=(_playing?'▶ ':'⏸ ')+fmt(t);
+  clockEl.textContent=(_playing?'▶ ':'⏸ ')+hms(t);
 }
 function tick(){
   if(!_playing)return;
@@ -581,9 +586,9 @@ function tick(){
   else{
     _cur=e;
     const maxT=Math.max(...playheads.map(p=>p.total));
-    clockEl.textContent='▶ '+fmt(e);
+    clockEl.textContent='▶ '+hms(e);
     paint(e); autoScroll();
-    if(e>=maxT){ _playing=false; _cur=maxT; clockEl.textContent='■ END '+fmt(maxT); return; }
+    if(e>=maxT){ _playing=false; _cur=maxT; clockEl.textContent='■ END '+hms(maxT); return; }
   }
   _raf=requestAnimationFrame(tick);
 }
@@ -595,7 +600,7 @@ document.getElementById('startBtn').onclick=()=>{
 document.getElementById('stopBtn').onclick=()=>{
   if(!_playing)return;
   _base=Math.max(0,elapsedNow()); _cur=_base; _playing=false; cancelAnimationFrame(_raf);
-  clockEl.textContent='⏸ '+fmt(_base);
+  clockEl.textContent='⏸ '+hms(_base);
 };
 document.getElementById('resetBtn').onclick=()=>{
   _playing=false; cancelAnimationFrame(_raf); _base=0; _cur=0;
