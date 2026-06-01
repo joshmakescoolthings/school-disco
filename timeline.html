@@ -166,8 +166,24 @@ const SETS = [
         at:'5:01:45pm', plays:'4:20', notes:'⭐ fires at BJ bar 55 · 3:02 of BJ underneath · 4:20 total'},
       {lane:'note', title:'Go bar 103 (56s remaining) → shoot ANOTHER ONE BITES THE DUST on Deck 2 matched to Go @120',
         at:'5:05:09pm', plays:'0:05'},
-      {lane:'deck2', lead:true, title:'Another One Bites the Dust', artist:'Queen', bpm:110, playBpm:120,
-        at:'5:05:09pm', plays:'0:00', notes:'⭐ shot at Go bar 103 · matched to Go @120 (native 110 → +9%) · 56s of Go underneath · ▶ LENGTH TBD'},
+      {lane:'deck2', lead:true, title:'Another One Bites the Dust', artist:'Queen', bpm:110, playBpm:109,
+        at:'5:05:09pm', outAt:'5:08:30pm', notes:'⭐ shot at Go bar 103 · both decks 109 · orig run 3:43 but FADED OUT over 17s from bar 81 (5:08:13 → 5:08:30) · Technologic HC1=bar49, HC3=bar81'},
+      {lane:'note', title:'AOBTD bar 49 (1:49 left) → shoot TECHNOLOGIC HC1 on Deck 1 @109',
+        at:'5:07:03pm', outAt:'5:08:13pm'},
+      {lane:'deck1', title:'Technologic — chant deck', artist:'Daft Punk', playBpm:109,
+        at:'5:07:03pm', outAt:'5:08:30pm', notes:'HC1 @ AOBTD bar 49 · HC3 @ AOBTD bar 81 (5:08:13) · layer over AOBTD → PAUSE at 5:08:30 for hype'},
+      {lane:'note', title:'AOBTD bar 81 (39s left, 5:08:13) → hit HC3 on Technologic · then fade AOBTD out completely over 17s',
+        at:'5:08:13pm', outAt:'5:08:30pm'},
+      {lane:'deck1', kind:'mc', lead:true, title:'PAUSE + hype', at:'5:08:30pm', plays:'0:15',
+        notes:'pause Technologic · hype the crowd · load BABY SHARK BREAKBEAT → Deck 2 · bump both decks 109 → 115 (hype length TBD)'},
+      {lane:'deck2', lead:true, title:'Baby Shark breakbeat', rampFrom:115, rampTo:132,
+        at:'5:08:45pm', plays:'1:26', notes:'⭐ BUILT-IN bpm shifts (enters 115 → ends 132) · fixed 1:26 · fire Technologic chant on BAR 12 · next blend leaves from 132'},
+      {lane:'deck1', lead:true, title:'YMCA (Minions)', artist:'The Minions', bpm:120, playBpm:120,
+        at:'5:10:11pm', plays:'2:54', notes:'⭐ 120bpm · 2:54 · minion-town MC zone, mismatches hidden'},
+      {lane:'deck2', lead:true, title:'The Bus Stop', artist:'Nuq version', bpm:110, playBpm:110,
+        at:'5:13:05pm', plays:'6:25', notes:'⭐ VERSION BY NUQ · 110bpm · 6:25'},
+      {lane:'note', title:'LOAD Block Rockin Beats (Chemical Brothers) → Deck 1 · armed, awaiting cue',
+        at:'5:13:05pm', plays:'0:30'},
       {lane:'deck1', lead:true, title:'The Git Up', artist:'Blanco Brown (original)', bpm:98, playBpm:98,
         at:'5:21:40pm', plays:'3:21', notes:'start cue at song start · full play'},
       {lane:'deck2', title:'Bluey Theme (armed)', bpm:196, playBpm:98,
@@ -331,9 +347,8 @@ const LANES = ['deck1','deck2','note'];
 
 /* Parked ideas — un-timed mashups to slot into a set later */
 const IDEAS = [
-  {title:'Technologic × Baby Shark breakbeat', set:'Juniors (likely)', lines:[
-    'Deck 1: Technologic — Daft Punk',
-    'Deck 2: Baby Shark breakbeat',
+  {title:'Technologic × Baby Shark breakbeat', set:'✅ PLACED in Juniors ~5:07–5:10pm', lines:[
+    'Deck 1: Technologic — Daft Punk · Deck 2: Baby Shark breakbeat',
     'Cue: kick the "buy it, use it, break it, fix it" chant off on BAR 12 of the Baby Shark breakbeat',
   ]},
   {title:'Cotton Eye Joe — Rednex', set:'Juniors · DEFERRED', lines:[
