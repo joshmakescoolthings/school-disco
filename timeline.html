@@ -75,6 +75,7 @@
   .transport button:active{transform:translateY(1px)}
   #stopBtn{background:#b0641f}
   #resetBtn{background:#3a4250}
+  #backBtn,#fwdBtn{background:#2f3a4a}
   .transport .pre{color:var(--muted);font-size:12px;display:flex;gap:5px;align-items:center;cursor:pointer;user-select:none}
   .clock{font-variant-numeric:tabular-nums;font-weight:700;color:#5bd98a;font-size:15px;margin-left:8px;min-width:90px}
   .playhead{position:absolute;left:0;right:0;height:0;border-top:2px solid #ff4d6d;z-index:20;pointer-events:none;box-shadow:0 0 9px rgba(255,77,109,.75)}
@@ -99,8 +100,10 @@
     <span class="chip"><span class="sw" style="background:transparent;border:1.5px dashed var(--gap)"></span>uncovered gap</span>
   </div>
   <div class="transport">
+    <button id="backBtn" title="jump to previous track head">⏮ Prev</button>
     <button id="startBtn">▶ Start</button>
     <button id="stopBtn">⏸ Stop</button>
+    <button id="fwdBtn" title="jump to next track head">Next ⏭</button>
     <button id="resetBtn">⟲ Reset</button>
     <label class="pre"><input type="checkbox" id="preroll"> 5s pre-roll</label>
     <span id="clock" class="clock">—</span>
@@ -542,10 +545,15 @@ function renderIdeas(){
 render();
 renderIdeas();
 
-/* ---- transport: Start / Stop / Reset + optional 5s pre-roll + moving playhead ---- */
-let _playing=false,_raf=0,_tStart=0,_pre=0,_base=0;
+/* ---- transport: Start / Stop / Reset / Skip + 5s pre-roll + center-lock auto-scroll ---- */
+let _playing=false,_raf=0,_tStart=0,_pre=0,_base=0,_cur=0;
 const clockEl=document.getElementById('clock');
 function elapsedNow(){return _base+((performance.now()-_tStart)-_pre)/1000;}
+// sorted elapsed-second start times of the lead (⭐) tracks in the Juniors set
+function headList(){
+  const set=SETS[0], st=clockToSec(set.clock24);
+  return [...new Set(set.tracks.filter(t=>t.lead && t.at).map(t=>Math.round(clockToSec(t.at)-st)))].sort((a,b)=>a-b);
+}
 function paint(e){
   playheads.forEach(p=>{
     p.ph.style.display='block';
@@ -554,15 +562,28 @@ function paint(e){
     p.ph.setAttribute('data-t', fmt(t)+' · '+clockLabel(p.start+t));
   });
 }
+// keep the Juniors playhead pinned to mid-screen once it gets there; before that, scroll stays put
+function autoScroll(){
+  if(!playheads[0])return;
+  const docY=playheads[0].ph.getBoundingClientRect().top+window.scrollY;
+  const target=docY-window.innerHeight/2;
+  if(target>0) window.scrollTo(0,target);
+}
+function seek(t){
+  t=Math.max(0,t); _base=t; _tStart=performance.now(); _pre=0; _cur=t;
+  paint(t); autoScroll();
+  clockEl.textContent=(_playing?'▶ ':'⏸ ')+fmt(t);
+}
 function tick(){
   if(!_playing)return;
   const e=elapsedNow();
   if(e<0){ clockEl.textContent='⏱ pre-roll '+Math.ceil(-e); paint(0); }
   else{
+    _cur=e;
     const maxT=Math.max(...playheads.map(p=>p.total));
     clockEl.textContent='▶ '+fmt(e);
-    paint(e);
-    if(e>=maxT){ _playing=false; clockEl.textContent='■ END '+fmt(maxT); return; }
+    paint(e); autoScroll();
+    if(e>=maxT){ _playing=false; _cur=maxT; clockEl.textContent='■ END '+fmt(maxT); return; }
   }
   _raf=requestAnimationFrame(tick);
 }
@@ -573,13 +594,21 @@ document.getElementById('startBtn').onclick=()=>{
 };
 document.getElementById('stopBtn').onclick=()=>{
   if(!_playing)return;
-  _base=Math.max(0,elapsedNow()); _playing=false; cancelAnimationFrame(_raf);
+  _base=Math.max(0,elapsedNow()); _cur=_base; _playing=false; cancelAnimationFrame(_raf);
   clockEl.textContent='⏸ '+fmt(_base);
 };
 document.getElementById('resetBtn').onclick=()=>{
-  _playing=false; cancelAnimationFrame(_raf); _base=0;
+  _playing=false; cancelAnimationFrame(_raf); _base=0; _cur=0;
   playheads.forEach(p=>{p.ph.style.display='none';});
-  clockEl.textContent='—';
+  clockEl.textContent='—'; window.scrollTo(0,0);
+};
+document.getElementById('fwdBtn').onclick=()=>{
+  const nx=headList().find(x=>x>_cur+0.5);
+  if(nx!=null) seek(nx);
+};
+document.getElementById('backBtn').onclick=()=>{
+  const prev=headList().filter(x=>x<=_cur-1.0);
+  seek(prev.length?prev[prev.length-1]:0);
 };
 </script>
 </body>
