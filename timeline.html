@@ -70,6 +70,16 @@
   .idea:first-of-type{border-top:none}
   .idea .it{font-weight:700}
   .idea .ic{color:var(--muted);font-size:12px;margin-top:3px}
+  .transport{display:flex;gap:10px;margin-top:12px;align-items:center;flex-wrap:wrap}
+  .transport button{background:#1f6feb;color:#fff;border:none;border-radius:7px;padding:8px 15px;font-size:13px;font-weight:700;cursor:pointer}
+  .transport button:active{transform:translateY(1px)}
+  #stopBtn{background:#b0641f}
+  #resetBtn{background:#3a4250}
+  .transport .pre{color:var(--muted);font-size:12px;display:flex;gap:5px;align-items:center;cursor:pointer;user-select:none}
+  .clock{font-variant-numeric:tabular-nums;font-weight:700;color:#5bd98a;font-size:15px;margin-left:8px;min-width:90px}
+  .playhead{position:absolute;left:0;right:0;height:0;border-top:2px solid #ff4d6d;z-index:20;pointer-events:none;box-shadow:0 0 9px rgba(255,77,109,.75)}
+  .playhead::before{content:attr(data-t);position:absolute;left:3px;top:-15px;background:#ff4d6d;color:#fff;
+    font-size:9px;font-weight:700;padding:0 5px;border-radius:3px;white-space:nowrap;font-variant-numeric:tabular-nums}
   footer{padding:14px 22px;color:var(--muted);font-size:12px;border-top:1px solid var(--grid)}
   code{background:#11151c;padding:1px 5px;border-radius:4px;color:#cdd6e2}
 </style>
@@ -87,6 +97,13 @@
     <span class="chip"><span class="pill" style="background:var(--spotify)">SPOT</span>Spotify</span>
     <span class="chip"><span class="pill" style="background:var(--studio)">S1</span>Studio One</span>
     <span class="chip"><span class="sw" style="background:transparent;border:1.5px dashed var(--gap)"></span>uncovered gap</span>
+  </div>
+  <div class="transport">
+    <button id="startBtn">▶ Start</button>
+    <button id="stopBtn">⏸ Stop</button>
+    <button id="resetBtn">⟲ Reset</button>
+    <label class="pre"><input type="checkbox" id="preroll"> 5s pre-roll</label>
+    <span id="clock" class="clock">—</span>
   </div>
 </header>
 
@@ -415,8 +432,10 @@ function normalize(set){
   return start;
 }
 
+let playheads=[];
 function render(){
   const wrap=document.getElementById('wrap');wrap.innerHTML='';
+  playheads=[];
   SETS.forEach(set=>{
     normalize(set);
     const total=set.minutes*60, H=set.minutes*MINPX;
@@ -505,6 +524,9 @@ function render(){
         col.insertAdjacentHTML('beforeend','<div class="empty">no tracks yet — read me your first one</div>');
       canvas.appendChild(col);
     });
+    const ph=document.createElement('div');ph.className='playhead';ph.style.display='none';
+    canvas.appendChild(ph);
+    playheads.push({ph,start,total,H});
     el.appendChild(canvas);wrap.appendChild(el);
   });
 }
@@ -519,6 +541,46 @@ function renderIdeas(){
 }
 render();
 renderIdeas();
+
+/* ---- transport: Start / Stop / Reset + optional 5s pre-roll + moving playhead ---- */
+let _playing=false,_raf=0,_tStart=0,_pre=0,_base=0;
+const clockEl=document.getElementById('clock');
+function elapsedNow(){return _base+((performance.now()-_tStart)-_pre)/1000;}
+function paint(e){
+  playheads.forEach(p=>{
+    p.ph.style.display='block';
+    const t=Math.max(0,Math.min(e,p.total));
+    p.ph.style.top=(t*MINPX/60)+'px';
+    p.ph.setAttribute('data-t', fmt(t)+' · '+clockLabel(p.start+t));
+  });
+}
+function tick(){
+  if(!_playing)return;
+  const e=elapsedNow();
+  if(e<0){ clockEl.textContent='⏱ pre-roll '+Math.ceil(-e); paint(0); }
+  else{
+    const maxT=Math.max(...playheads.map(p=>p.total));
+    clockEl.textContent='▶ '+fmt(e);
+    paint(e);
+    if(e>=maxT){ _playing=false; clockEl.textContent='■ END '+fmt(maxT); return; }
+  }
+  _raf=requestAnimationFrame(tick);
+}
+document.getElementById('startBtn').onclick=()=>{
+  if(_playing)return;
+  _pre=(_base===0 && document.getElementById('preroll').checked)?5000:0;
+  _tStart=performance.now(); _playing=true; tick();
+};
+document.getElementById('stopBtn').onclick=()=>{
+  if(!_playing)return;
+  _base=Math.max(0,elapsedNow()); _playing=false; cancelAnimationFrame(_raf);
+  clockEl.textContent='⏸ '+fmt(_base);
+};
+document.getElementById('resetBtn').onclick=()=>{
+  _playing=false; cancelAnimationFrame(_raf); _base=0;
+  playheads.forEach(p=>{p.ph.style.display='none';});
+  clockEl.textContent='—';
+};
 </script>
 </body>
 </html>
