@@ -24,8 +24,7 @@
   .chip{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--muted)}
   .sw{width:14px;height:14px;border-radius:3px;display:inline-block}
   .pill{font-size:10px;font-weight:700;padding:1px 5px;border-radius:4px;color:#fff}
-  .wrap{display:grid;grid-template-columns:1fr;gap:22px;padding:16px;align-items:start}
-  @media(min-width:1000px){.wrap{grid-template-columns:1fr 1fr;padding:22px}}
+  .wrap{display:grid;grid-template-columns:1fr;gap:26px;padding:20px;align-items:start}
   .set{background:var(--panel);border:1px solid var(--grid);border-radius:12px;padding:14px 10px 18px;min-width:0}
   .set h2{margin:0 0 2px;font-size:16px}
   .set .meta{color:var(--muted);font-size:12px;margin-bottom:6px}
@@ -323,58 +322,80 @@ const SETS = [
         at:'7:07:18pm', plays:'0:06'},
       {lane:'deck1', lead:true, title:'Tarantella', artist:'Joel Fletcher × Sooshi Mango', rampFrom:110, rampTo:130,
         at:'7:06:59pm', outAt:'7:09:59pm', notes:'⭐ shot at AOBTD bar 47 · 110 matched to AOBTD breakdown → ⤴ ramp to 130 (native) over the main riff (kids love the speed-up) · runs 2:41 past AOBTD kill'},
+      {lane:'note', title:'LOAD Technologic → Deck 1 + Baby Shark breakbeat → Deck 2',
+        at:'7:16:21pm', plays:'0:30'},
+      {lane:'deck1', title:'Technologic — chant deck', artist:'Daft Punk', playBpm:115,
+        at:'7:17:21pm', outAt:'7:18:47pm', notes:'"buy it use it break it fix it" chant on BAR 12 of the breakbeat'},
+      {lane:'deck2', lead:true, title:'Baby Shark breakbeat', rampFrom:115, rampTo:132,
+        at:'7:17:21pm', outAt:'7:18:47pm', notes:'⭐ built-in bpm shifts (115→132) · 1:26 · Technologic chant on bar 12'},
+      {lane:'deck1', kind:'mc', lead:true, title:'10s HYPE', at:'7:18:47pm', plays:'0:10',
+        notes:'🎤 beat-stop hype → masks the 132→98 drop · slam Git Up fresh'},
       {lane:'deck1', lead:true, title:'The Git Up', artist:'Blanco Brown (original)', bpm:98, playBpm:98,
-        at:'7:21:40pm', plays:'3:21', notes:'start cue at song start · full play'},
+        at:'7:18:57pm', plays:'3:21', notes:'start cue at song start · full play'},
       {lane:'deck2', title:'Bluey Theme (armed)', bpm:196, playBpm:98,
-        at:'7:21:40pm', plays:'3:21', notes:'native 196, djay ½-time to 98 · ad-lib scratch + hot-cue stabs'},
+        at:'7:18:57pm', plays:'3:21', notes:'native 196, djay ½-time to 98 · ad-lib scratch + hot-cue stabs'},
       {lane:'note', title:'Deck 2 Bluey — ad-lib: scratch & fire hook + Mum/Dad/Bingo over The Git Up (untimed)',
-        at:'7:21:40pm', plays:'3:21'},
+        at:'7:18:57pm', plays:'3:21'},
 
-      {lane:'deck1', kind:'mc', lead:true, title:'Welcome message', at:'7:25:01pm', plays:'0:30',
+      {lane:'deck1', kind:'mc', lead:true, title:'Welcome message', at:'7:22:18pm', plays:'0:30',
         notes:'low-key hello · resets tempo for 80bpm drop (length = PLACEHOLDER, confirm)'},
 
       {lane:'deck1', lead:true, title:'Shake It Off', artist:'Taylor Swift', bpm:160, playBpm:80,
-        at:'7:25:31pm', plays:'3:39', notes:'full play · ½-time, busy hats keep energy up'},
+        at:'7:22:48pm', plays:'3:39', notes:'full play · ½-time, busy hats keep energy up'},
       {lane:'deck2', title:"Drop It Like It's Hot — title loop", artist:'Snoop', bpm:93, playBpm:80,
-        at:'7:25:31pm', outAt:'7:28:36pm', notes:"armed @80 · backbeat over 'new girlfriend' bridge · PULL after breakdown"},
+        at:'7:22:48pm', outAt:'7:25:53pm', notes:"armed @80 · backbeat over 'new girlfriend' bridge · PULL after breakdown"},
       {lane:'note', title:"⚠ LOAD ZOOTOPIA → DECK 2 · HC1 = 'HEY' stab, fire on Shake It Off outro",
-        at:'7:28:36pm', outAt:'7:29:10pm'},
+        at:'7:25:53pm', outAt:'7:26:27pm'},
 
       {lane:'deck2', lead:true, title:'Zootopia', rampFrom:160, rampTo:129,
-        at:'7:29:10pm', outAt:'7:31:22pm',
+        at:'7:26:27pm', outAt:'7:28:39pm',
         notes:"in at HC1 @ end of Shake It Off · synced 160 → ramp to 129 · leads till bar 77"},
       {lane:'deck2', title:'Zootopia (outro)', playBpm:129,
-        at:'7:31:22pm', outAt:'7:32:11pm', notes:'final 49s playing out UNDER Soda Pop'},
+        at:'7:28:39pm', outAt:'7:29:28pm', notes:'final 49s playing out UNDER Soda Pop'},
 
-      {lane:'note', title:'LOAD SODA POP → DECK 1 · HC1 = hook loop', at:'7:30:20pm', plays:'0:25'},
+      {lane:'note', title:'LOAD SODA POP → DECK 1 · HC1 = hook loop', at:'7:27:37pm', plays:'0:25'},
       {lane:'deck1', title:'Soda Pop — HC1 loop (build-in)', artist:'Saja Boys', playBpm:129,
-        at:'7:31:07pm', outAt:'7:31:22pm',
+        at:'7:28:24pm', outAt:'7:28:39pm',
         notes:'🎛 filter build over Zootopia bars 69→77 (8 bars) → neutral by bar 77'},
       {lane:'deck1', lead:true, title:'Soda Pop', artist:'Saja Boys', playBpm:129,
-        at:'7:31:22pm', plays:'2:17',
+        at:'7:28:39pm', plays:'2:17',
         notes:'⭐ takes floor at Zootopia bar 77 (49s of Zootopia left) · loop released → full play-out @129'},
 
-      {lane:'note', title:'LOAD I LIKE TO MOVE IT → DECK 2 (Madagascar)', at:'7:32:15pm', plays:'0:20'},
-      {lane:'note', title:'Soda Pop bar 74 (11s left) → start SHOOTING HC1 on Deck 2', at:'7:33:28pm', plays:'0:11'},
+      {lane:'note', title:'LOAD I LIKE TO MOVE IT → DECK 2 (Madagascar)', at:'7:29:32pm', plays:'0:20'},
+      {lane:'note', title:'Soda Pop bar 74 (11s left) → start SHOOTING HC1 on Deck 2', at:'7:30:45pm', plays:'0:11'},
       {lane:'deck2', title:'I Like To Move It — HC1 stabs', artist:'Reel 2 Real (Madagascar)', playBpm:129,
-        at:'7:33:28pm', outAt:'7:33:39pm', notes:'shoot/chop HC1 over Soda Pop tail · synced 129'},
+        at:'7:30:45pm', outAt:'7:30:56pm', notes:'shoot/chop HC1 over Soda Pop tail · synced 129'},
       {lane:'deck2', lead:true, title:'I Like To Move It', artist:'Reel 2 Real (Madagascar)', playBpm:127,
-        at:'7:33:39pm', outAt:'7:35:32pm', notes:'⭐ 127bpm · NOT full play-out — cut to party loop at 24s remaining'},
+        at:'7:30:56pm', outAt:'7:32:49pm', notes:'⭐ 127bpm · NOT full play-out — cut to party loop at 24s remaining'},
       {lane:'deck2', lead:true, title:'"We Like to Party party" hook loop', playBpm:127,
-        at:'7:35:32pm', outAt:'7:35:48pm', notes:'~4s hook loop ×4 clean repeats @127 · then 16th-note roll-out (untimed)'},
+        at:'7:32:49pm', outAt:'7:33:05pm', notes:'~4s hook loop ×4 clean repeats @127 · then 16th-note roll-out (untimed)'},
       {lane:'note', title:'End of 4th repeat → SHOOT FIREWORK on Deck 1 · party hook stutters out as 16th-loop (untimed)',
-        at:'7:35:48pm', plays:'0:14'},
+        at:'7:33:05pm', plays:'0:14'},
       {lane:'deck1', lead:true, title:'Firework', artist:'Katy Perry', playBpm:127,
-        at:'7:35:48pm', plays:'3:39', notes:'⭐ in after 4 party repeats · 127bpm · time-filler, full-ish play'},
+        at:'7:33:05pm', plays:'3:39', notes:'⭐ in after 4 party repeats · 127bpm · time-filler, full-ish play'},
       {lane:'note', title:'Cue FREAKS remix (Studio One) → DECK 2 · 128bpm beatmatched off Firework',
-        at:'7:38:40pm', plays:'0:30'},
+        at:'7:35:57pm', plays:'0:30'},
       {lane:'deck2', lead:true, title:'Freaks (own remix)', artist:'Timmy Trumpet', source:'studio', playBpm:128,
-        at:'7:39:27pm', plays:'2:33', notes:'⭐ played from Studio One · 128bpm · beatmatched off Firework outro'},
+        at:'7:36:44pm', plays:'2:33', notes:'⭐ played from Studio One · 128bpm · beatmatched off Firework outro'},
+      {lane:'note', title:'🎤 HIGH-ENERGY SINGALONG BUILD → St Thomas · full run times, alternating decks · bpm/keys TBD (messy part)',
+        at:'7:39:17pm', outAt:'7:58:12pm'},
+      {lane:'deck2', lead:true, title:'Dynamite', artist:'BTS',
+        at:'7:39:17pm', plays:'3:19', notes:'⭐ singalong · full play · ✏️ length rough'},
+      {lane:'deck1', lead:true, title:'Macarena', artist:'Los del Río',
+        at:'7:42:36pm', plays:'3:54', notes:'⭐ singalong · full play · ✏️ length rough'},
+      {lane:'deck2', lead:true, title:'Uptown Funk', artist:'Mark Ronson ft. Bruno Mars',
+        at:'7:46:30pm', plays:'4:30', notes:'⭐ singalong · full play · ✏️ length rough'},
+      {lane:'deck1', lead:true, title:'Mr. Brightside', artist:'The Killers',
+        at:'7:51:00pm', plays:'3:42', notes:'⭐ singalong peak · full play · ✏️ length rough'},
+      {lane:'deck2', lead:true, title:'Take Me Home, Country Roads', artist:'KSHMR version',
+        at:'7:54:42pm', plays:'3:30', notes:'⭐ singalong · KSHMR version · full play · ✏️ length rough (confirm)'},
+      {lane:'deck1', lead:true, title:'School Prayer (pop/punk remix)', artist:'StThomas182 version', source:'studio',
+        at:'7:58:12pm', plays:'1:48', notes:'⭐ CLOSER · "St Thomas, we pray" · ends seniors at 8:00:00 (mirrors juniors closer)'},
     ]
   }
 ];
 
-const MINPX = 60; // 1px per second — fine scale so short cues/notes are legible
+const MINPX = 90; // 1.5px per second — taller rows for easy note reading
 const LANES = ['deck1','deck2','note'];
 
 /* Parked ideas — un-timed mashups to slot into a set later */
